@@ -148,9 +148,7 @@
 
                 if (response.ok) {
                     const createdUser = await response.json();
-                    alert('Usuário cadastrado com sucesso! ID: ' + createdUser.id);
-                    // Redireciona para a tela de Gerenciar Pedido após o cadastro bem-sucedido
-                    window.location.href = 'gerenciamento.html'; // Redireciona para a tela de pedidos
+                    window.location.href = '../Pedido/Gerenciamento.html'; // Redireciona para a tela de pedidos
                 } else {
                     alert('Erro ao cadastrar usuário: ' + response.statusText);
                 }
