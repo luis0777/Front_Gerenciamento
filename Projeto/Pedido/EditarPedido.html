@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Pedido</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 80%; /* Tamanho maior da tela */
+            max-width: 1200px; /* Largura máxima */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #bb86fc;
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* Fonte maior */
+            font-weight: 600;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #018786;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #035c4b;
+            transform: scale(0.98);
+        }
+
+        .button-text {
+            text-transform: uppercase;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        input, textarea, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Melhorando a responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Atualizar Pedido</h2>
+
+        <!-- Botões na parte superior -->
+        <div class="buttons-container">
+            <button onclick="window.location.href='todosPedidos.html'">
+                <span class="button-text">Todos os Pedidos</span>
+            </button>
+            <button onclick="window.location.href='criarPedido.html'">
+                <span class="button-text">Criar Pedido</span>
+            </button>
+            <button onclick="window.location.href='editarPedido.html'">
+                <span class="button-text">Editar Pedido</span>
+            </button>
+            <button onclick="window.location.href='pesquisarPedido.html'">
+                <span class="button-text">Pesquisar Pedido</span>
+            </button>
+            <button onclick="window.location.href='apagarPedido.html'">
+                <span class="button-text">Apagar Pedido</span>
+            </button>
+        </div>
+
+        <!-- Formulário para atualizar pedido -->
+        <div class="form-container">
+            <form id="updatePedidoForm" onsubmit="updatePedido(event)">
+                <label for="pedidoId">ID do Pedido:</label>
+                <input type="number" id="pedidoId" name="pedidoId" placeholder="Digite o ID do pedido para atualizar" required>
+
+                <label for="descricao">Nova Descrição:</label>
+                <textarea id="descricao" name="descricao" placeholder="Digite a nova descrição do pedido" required></textarea>
+
+                <input type="submit" value="Atualizar Pedido">
+            </form>
+
+            <!-- Resultados da atualização -->
+            <div id="updateResults" style="margin-top: 20px; color: #03dac6;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function updatePedido(event) {
+            event.preventDefault(); // Previne o envio do formulário
+
+            const pedidoId = document.getElementById('pedidoId').value;
+            const descricao = document.getElementById('descricao').value;
+
+            if (!pedidoId || !descricao) {
+                alert('Por favor, insira todos os campos.');
+                return;
+            }
+
+            const url = `http://localhost:8080/pedidos/${pedidoId}`;
+            const username = "admin";
+            const password = "teste123";
+            const auth = 'Basic ' + btoa(username + ':' + password); // Cabeçalho de autenticação básica
+
+            const updatedPedidoDTO = {
+                descricao: descricao
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedPedidoDTO)
+                });
+
+                if (response.ok) {
+                    const updatedPedido = await response.json();
+                    displayUpdateResults(updatedPedido);
+                } else {
+                    console.error('Erro ao atualizar o pedido:', response.status);
+                    alert('Erro ao atualizar o pedido: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com a API:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        }
+
+        function displayUpdateResults(updatedPedido) {
+            const updateResults = document.getElementById('updateResults');
+            updateResults.innerHTML = ''; // Limpa os resultados de atualização
+
+            if (updatedPedido) {
+                updateResults.innerHTML = `
+                    <p><strong>ID do Pedido Atualizado:</strong> ${updatedPedido.id}</p>
+                    <p><strong>Nova Descrição:</strong> ${updatedPedido.descricao}</p>
+                    <p><strong>ID do Usuário:</strong> ${updatedPedido.usuario.id}</p>
+                    <p><strong>Login do Usuário:</strong> ${updatedPedido.usuario.login}</p>
+                    <p><strong>Email do Usuário:</strong> ${updatedPedido.usuario.email}</p>
+                `;
+            } else {
+                updateResults.innerHTML = '<p>Erro ao atualizar o pedido. Tente novamente.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

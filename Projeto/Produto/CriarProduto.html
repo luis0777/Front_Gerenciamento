@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Produto</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 80%; /* Tamanho maior da tela */
+            max-width: 1200px; /* Largura máxima */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #bb86fc;
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* Fonte maior */
+            font-weight: 600;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #018786;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #035c4b;
+            transform: scale(0.98);
+        }
+
+        .produto-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .produto-form input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        .produto-form label {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        /* Melhorando a responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Botão de Voltar para a tela de gerenciamento -->
+        <div>
+            <button onclick="window.location.href='../Pedido/Gerenciamento.html'">Voltar para o Gerenciamento</button>
+        </div>
+
+        <h2>Criar Produto</h2>
+
+        <!-- Botões para interagir com produtos -->
+        <div class="button-container">
+            <button onclick="window.location.href='todosProdutos.html'">Todos os Produtos</button>
+            <button onclick="window.location.href='criarProduto.html'">Criar Produto</button>
+            <button onclick="window.location.href='editarProduto.html'">Editar Produto</button>
+            <button onclick="window.location.href='pesquisarProduto.html'">Pesquisar Produto</button>
+            <button onclick="window.location.href='apagarProduto.html'">Apagar Produto</button>
+        </div>
+
+        <!-- Formulário de Criação de Produto -->
+        <div class="produto-form">
+            <label for="nome">Nome do Produto</label>
+            <input type="text" id="nome" placeholder="Nome do Produto" required>
+
+            <label for="preco">Preço do Produto</label>
+            <input type="number" step="0.01" id="preco" placeholder="Preço" required>
+
+            <label for="pedidoId">ID do Pedido</label>
+            <input type="number" id="pedidoId" placeholder="ID do Pedido" required>
+
+            <label for="descricao">Descrição do Pedido</label>
+            <input type="text" id="descricao" placeholder="Descrição do Pedido" required>
+
+            <button onclick="criarProduto()">Criar Produto</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para criar produto
+        async function criarProduto() {
+            const nome = document.getElementById('nome').value;
+            const preco = document.getElementById('preco').value;
+            const pedidoId = document.getElementById('pedidoId').value;
+            const descricao = document.getElementById('descricao').value;
+
+            const produto = {
+                nome: nome,
+                preco: parseFloat(preco),
+                pedido: {
+                    id: parseInt(pedidoId),
+                    descricao: descricao
+                }
+            };
+
+            const url = 'http://localhost:8080/produtos'; // Endpoint para criar produto
+            const username = "admin";
+            const password = "teste123";
+            const auth = 'Basic ' + btoa(username + ':' + password); // Cabeçalho de autenticação básica
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(produto)
+                });
+
+                if (response.ok) {
+                    alert('Produto criado com sucesso!');
+                    window.location.href = 'todosProdutos.html'; // Redireciona para a lista de produtos
+                } else {
+                    console.error('Erro ao criar produto:', response.status);
+                    alert('Erro ao criar produto: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com a API:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

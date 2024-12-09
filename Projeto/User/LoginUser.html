@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #1e1e1e;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #bb86fc;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            background-color: #2e2e2e;
+            color: #e0e0e0;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #bb86fc;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #018786;
+        }
+
+        button:active {
+            background-color: #035c4b;
+        }
+
+        .back-button {
+            padding: 10px 15px;
+            background-color: #bb86fc;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #121212;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #7a4ca8;
+        }
+
+        .back-button:active {
+            background-color: #5d3b80;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login Usuário</h1>
+        <form id="userForm" onsubmit="loginUsuario(event)">
+            <label for="login">Login:</label>
+            <input type="text" id="login" name="login" required>
+
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Entrar</button>
+        </form>
+        <button class="back-button" onclick="window.location.href='home.html'">Voltar</button>
+    </div>
+
+    <script>
+        async function loginUsuario(event) {
+            event.preventDefault();
+
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+
+            const userData = { login, password };
+
+            const url = "http://localhost:8080/users/login";  // Endpoint de login
+
+            const username = "admin";  // Usuário de autenticação da API
+            const apiPassword = "teste123";  // Senha de autenticação da API
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa(`${username}:${apiPassword}`)
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    const loggedInUser = await response.json();
+                    console.log(loggedInUser); // Exibe os dados do usuário no console para debug
+
+                    // Verifique se o login foi bem-sucedido
+                    if (loggedInUser && loggedInUser.id) {
+                    
+                        window.location.href = '../Pedido/gerenciamento.html';  // Redireciona para a tela de pedidos
+                    } else {
+                        alert('Erro ao realizar login: Dados inválidos!');
+                    }
+                } else {
+                    const errorText = await response.text(); // Obtém a mensagem de erro do backend
+                    alert('Erro ao realizar login: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com a API:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

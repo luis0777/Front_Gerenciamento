@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Usuário</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #bb86fc;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #2e2e2e;
+            color: #e0e0e0;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #bb86fc;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #018786;
+        }
+
+        button:active {
+            background-color: #035c4b;
+        }
+
+        /* Estilo para o botão de voltar (ajustado para o mesmo padrão do botão Entrar) */
+        .back-button {
+            padding: 10px 15px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #018786;
+        }
+
+        .back-button:active {
+            background-color: #035c4b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cadastrar Usuário</h1>
+        <form id="userForm" onsubmit="cadastrarUsuario(event)">
+            <label for="login">Login:</label>
+            <input type="text" id="login" name="login" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <!-- Botão de Voltar para a Home -->
+        <button class="back-button" onclick="window.location.href='home.html'">
+            Voltar para a Home
+        </button>
+    </div>
+
+    <script>
+        async function cadastrarUsuario(event) {
+            event.preventDefault();
+
+            const login = document.getElementById('login').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const userData = { login, email, password };
+
+            const url = "http://localhost:8080/users";
+            const username = "admin";
+            const apiPassword = "teste123";
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa(`${username}:${apiPassword}`)
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    const createdUser = await response.json();
+                    alert('Usuário cadastrado com sucesso! ID: ' + createdUser.id);
+                    // Redireciona para a tela de Gerenciar Pedido após o cadastro bem-sucedido
+                    window.location.href = 'gerenciamento.html'; // Redireciona para a tela de pedidos
+                } else {
+                    alert('Erro ao cadastrar usuário: ' + response.statusText);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com a API:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

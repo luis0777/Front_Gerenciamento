@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Pedido</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 80%; /* Tamanho maior da tela */
+            max-width: 1200px; /* Largura máxima */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #bb86fc;
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* Fonte maior */
+            font-weight: 600;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #018786;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #035c4b;
+            transform: scale(0.98);
+        }
+
+        .button-text {
+            text-transform: uppercase;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        input, textarea, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #03dac6;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #018786;
+        }
+
+        input[type="submit"]:active {
+            background-color: #035c4b;
+        }
+
+        /* Melhorando a responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Criar Pedido</h2>
+
+       <!-- Botões na parte superior -->
+       <div class="buttons-container">
+        <button onclick="window.location.href='todosPedidos.html'">
+            <span class="button-text">Todos os Pedidos</span>
+        </button>
+        <button onclick="window.location.href='criarPedido.html'">
+            <span class="button-text">Criar Pedido</span>
+        </button>
+        <button onclick="window.location.href='editarPedido.html'">
+            <span class="button-text">Editar Pedido</span>
+        </button>
+        <button onclick="window.location.href='pesquisarPedido.html'">
+            <span class="button-text">Pesquisar Pedido</span>
+        </button>
+        <button onclick="window.location.href='apagarPedido.html'">
+            <span class="button-text">Apagar Pedido</span>
+        </button>
+    </div>
+
+        <!-- Formulário para criar um novo pedido -->
+        <div class="form-container">
+            <form id="createPedidoForm">
+                <label for="descricao">Descrição do Pedido:</label>
+                <input type="text" id="descricao" name="descricao" placeholder="Descreva o pedido" required>
+
+                <label for="usuarioId">ID do Usuário:</label>
+                <input type="number" id="usuarioId" name="usuarioId" placeholder="Informe o ID do usuário" required>
+
+                <label for="usuarioLogin">Login do Usuário:</label>
+                <input type="text" id="usuarioLogin" name="usuarioLogin" placeholder="Informe o login do usuário" required>
+
+                <label for="usuarioEmail">Email do Usuário:</label>
+                <input type="email" id="usuarioEmail" name="usuarioEmail" placeholder="Informe o email do usuário" required>
+
+                <label for="usuarioPassword">Senha do Usuário:</label>
+                <input type="password" id="usuarioPassword" name="usuarioPassword" placeholder="Informe a senha do usuário" required>
+
+                <input type="submit" value="Criar Pedido">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Função para enviar o formulário de criar pedido
+        document.getElementById("createPedidoForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const descricao = document.getElementById("descricao").value;
+            const usuarioId = document.getElementById("usuarioId").value;
+            const usuarioLogin = document.getElementById("usuarioLogin").value;
+            const usuarioEmail = document.getElementById("usuarioEmail").value;
+            const usuarioPassword = document.getElementById("usuarioPassword").value;
+
+            const url = 'http://localhost:8080/pedidos'; // Endpoint para criar o pedido
+            const username = "admin";
+            const password = "teste123";
+            const auth = 'Basic ' + btoa(username + ':' + password); // Cabeçalho de autenticação básica
+
+            const pedidoData = {
+                descricao: descricao,
+                usuario: {
+                    id: usuarioId,
+                    login: usuarioLogin,
+                    email: usuarioEmail,
+                    password: usuarioPassword
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(pedidoData)
+                });
+
+                if (response.ok) {
+                    alert('Pedido criado com sucesso!');
+                    window.location.href = 'todosPedidos.html'; // Redireciona para a página de todos os pedidos
+                } else {
+                    alert('Erro ao criar o pedido. Tente novamente.');
+                }
+            } catch (error) {
+                console.error('Erro ao criar pedido:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

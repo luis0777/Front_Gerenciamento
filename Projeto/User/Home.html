@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Pedidos</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 500px;
+            position: relative;
+            text-align: center;
+        }
+
+        h1 {
+            color: #bb86fc;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #018786;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #035c4b;
+            transform: scale(0.98);
+        }
+
+        .button-text {
+            text-transform: uppercase;
+        }
+
+        /* Melhorando a responsividade */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Pedidos</h1>
+        
+        <!-- Botões de Login e Cadastro lado a lado -->
+        <div class="buttons-container">
+            <button onclick="window.location.href='LoginUser.html'">
+                <span class="button-text">Login</span>
+            </button>
+            <button onclick="window.location.href='CadastrarUser.html'">
+                <span class="button-text">Cadastrar</span>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisar Produto</title>
+    <style>
+        /* Paleta escura */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 80%; /* Tamanho maior da tela */
+            max-width: 1200px; /* Largura máxima */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #bb86fc;
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* Fonte maior */
+            font-weight: 600;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #03dac6;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #018786;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #035c4b;
+            transform: scale(0.98);
+        }
+
+        .produto-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .produto-form input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        .produto-form label {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        .resultado {
+            margin-top: 20px;
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            white-space: pre-line;
+        }
+
+        /* Estilo para exibir os produtos */
+        .produto-item {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        .produto-item span {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #e0e0e0;
+        }
+
+        .produto-item strong {
+            color: #03dac6;
+        }
+
+        /* Melhorando a responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Botão de Voltar para a tela de gerenciamento -->
+        <div>
+            <button onclick="window.location.href='../Pedido/Gerenciamento.html'">Voltar para o Gerenciamento</button>
+        </div>
+
+        <h2>Pesquisar Produto</h2>
+
+        <!-- Botões para interagir com produtos -->
+        <div class="button-container">
+            <button onclick="window.location.href='todosProdutos.html'">Todos os Produtos</button>
+            <button onclick="window.location.href='criarProduto.html'">Criar Produto</button>
+            <button onclick="window.location.href='editarProduto.html'">Editar Produto</button>
+            <button onclick="window.location.href='pesquisarProduto.html'">Pesquisar Produto</button>
+            <button onclick="window.location.href='apagarProduto.html'">Apagar Produto</button>
+        </div>
+
+        <!-- Formulário de Pesquisa de Produto -->
+        <div class="produto-form">
+            <label for="pedido_id">ID do Pedido</label>
+            <input type="number" id="pedido_id" placeholder="ID do Pedido" required>
+
+            <button onclick="pesquisarProduto()">Pesquisar Produto</button>
+        </div>
+
+        <!-- Exibição dos resultados -->
+        <div class="resultado" id="resultado">
+            <!-- Resultados serão exibidos aqui -->
+        </div>
+    </div>
+
+    <script>
+        // Função para pesquisar produto por ID de pedido
+        async function pesquisarProduto() {
+            const pedidoId = document.getElementById('pedido_id').value;
+
+            const url = `http://localhost:8080/produtos/search?pedido_id=${pedidoId}`; // Endpoint para buscar produtos pelo ID do pedido
+            const username = "admin";
+            const password = "teste123";
+            const auth = 'Basic ' + btoa(username + ':' + password); // Cabeçalho de autenticação básica
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const produtos = await response.json();
+                    mostrarResultado(produtos);
+                } else {
+                    console.error('Erro ao pesquisar produto:', response.status);
+                    alert('Erro ao pesquisar produto: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com a API:', error);
+                alert('Erro ao conectar com a API: ' + error.message);
+            }
+        }
+
+        // Função para mostrar os resultados da pesquisa
+        function mostrarResultado(produtos) {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = ''; // Limpa os resultados anteriores
+
+            if (produtos.length === 0) {
+                resultadoDiv.innerHTML = 'Nenhum produto encontrado.';
+                return;
+            }
+
+            let resultadoHTML = '';
+            produtos.forEach(produto => {
+                resultadoHTML += `
+                    <div class="produto-item">
+                        <span><strong>ID:</strong> ${produto.id}</span>
+                        <span><strong>Nome:</strong> ${produto.nome}</span>
+                        <span><strong>Preço:</strong> R$ ${produto.preco.toFixed(2)}</span>
+                        <span><strong>Pedido:</strong> ${produto.pedido.id} - ${produto.pedido.descricao}</span>
+                        <span><strong>Usuário:</strong> ${produto.pedido.usuario.login} (${produto.pedido.usuario.email})</span>
+                    </div>
+                `;
+            });
+
+            resultadoDiv.innerHTML = resultadoHTML;
+        }
+    </script>
+</body>
+</html>
